@@ -13,7 +13,7 @@
 // to get a list of books based on author [Done]
 // 
 // 2. POST Method
-// To post a new book
+// To post a new book [Done]
 // 
 // 3. PUT Method
 // Update book details
@@ -34,7 +34,7 @@
 // to get a list of authors based on book [Done]
 // 
 // 2. POST Method
-// to post a new Author
+// to post a new Author [Done]
 // 
 // 3. PUT Method
 // Update author details
@@ -53,7 +53,7 @@
 // to get a list of publications based on book [Done]
 // 
 // 2. Post Method
-// Add new Publication
+// Add new Publication [Done]
 // 
 // 3. PUT Method
 // Update Publication details

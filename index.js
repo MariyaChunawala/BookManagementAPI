@@ -155,4 +155,43 @@ BookManager.get("/p/book/:isbn", (request, response) =>{
     return response.json({publications : getListOfPublications});
 });
 
+
+/* 
+    Route : /book/new
+    Description : to post a new Book
+    Access : PUBLIC
+    Parameters : NONE
+    Method : POST
+*/
+BookManager.post("/book/new", (request, response) =>{
+    const { newBook } = request.body;
+    Database.books.push(newBook);
+    return response.json({Books : Database.books, Message : "New Book is added"});
+});
+
+/* 
+    Route : /author/new/post
+    Description : to post a new Author
+    Access : PUBLIC
+    Parameters : NONE
+    Method : POST
+*/
+BookManager.post("/author/new/post", (request, response) =>{
+    const { newAuthor } = request.body;
+    Database.authors.push(newAuthor);
+    return response.json({Author : Database.authors, Message : "New Author is added"});
+});
+
+/* 
+    Route : /publications/new
+    Description : to post a new publication
+    Access : PUBLIC
+    Parameters : NONE
+    Method : POST
+*/
+BookManager.post("/publication/new", (request, response) =>{
+    const { newPublication } = request.body;
+    Database.publications.push(newPublication);
+    return response.json({Publications : Database.publications, Message : "New Publication is added"});
+});
 BookManager.listen(3000, () => console.log("Server is running!!!"));

@@ -20,8 +20,8 @@
 // update/add new author [Done]
 // 
 // 4. DELETE Method
-// Delete a book
-// Delete an author from a book
+// Delete a book [Done]
+// Delete an author from a book [Done]
 
 
 // Author 
@@ -40,7 +40,7 @@
 // Update author details i.e name [Done]
 // 
 // 4. DELETE Method
-// Delete an Author
+// Delete an Author [Done]
 
 
 // publications
@@ -60,8 +60,5 @@
 // Udpate/add new book to a publications [Done]
 // 
 // 4. DELETE Method
-// Delete a book from publication
-// Delete a publication
-// 
-// 
-// How the server serves the request?
+// Delete a book from publication [Done]
+// Delete a publication [Done]

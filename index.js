@@ -1,6 +1,7 @@
 // BOOK MANAGEMENT API 
 
 // Express FrameWork
+const { response } = require("express");
 const express = require("express");
 
 // Import Database
@@ -297,6 +298,102 @@ BookManager.put("/publication/update/book/:isbn", (request, response) =>{
     })
 
     return response.json({books: Database.books, publications: Database.publications});
+});
+
+/* 
+    Route : /book/delete/
+    Description : Delete a book
+    Access : PUBLIC
+    Parameters : ISBN
+    Method : DELETE
+*/
+BookManager.delete("/book/delete/:isbn", (request, response) => {
+    const updatedBookDatabase = Database.books.filter((book) => book.ISBN !== request.params.isbn);
+    Database.books = updatedBookDatabase;
+    return response.json({books : Database.books });
+});
+
+/* 
+    Route : /book/delete/author
+    Description : Delete an author from a book 
+    Access : PUBLIC
+    Parameters : ISBN, authorId
+    Method : DELETE
+*/
+BookManager.delete("/book/delete/author/:isbn/:authorId", (request, response) => {
+    // Delete an author from book database
+    Database.books.forEach((book) => {
+        if(book.ISBN === request.params.isbn){
+            const updatedAuthorList = book.authors.filter((author) => author !== parseInt(request.params.authorId));
+            book.authors = updatedAuthorList;
+            return;
+        }
+    });
+
+    // Delete a book from author database
+    Database.authors.forEach((author) => {
+        if(author.id === parseInt(request.params.authorId)){
+            const updatedBookList = author.books.filter((book) => book !== request.params.isbn);
+            author.books = updatedBookList;
+            return;
+        }
+    })
+
+    return response.json({books : Database.books, authors : Database.authors});
+});
+
+/* 
+    Route : /author/delete/
+    Description : Delete an Author
+    Access : PUBLIC
+    Parameters : ID
+    Method : DELETE
+*/
+BookManager.delete("/author/delete/:id", (request, response) => {
+    const updatedAuthorDatabase = Database.authors.filter((author) => author.id !== parseInt(request.params.id));
+    Database.authors = updatedAuthorDatabase;
+    return response.json({authors : Database.authors });
+});
+
+/* 
+    Route : /publication/delete/
+    Description : Delete a publication
+    Access : PUBLIC
+    Parameters : ID
+    Method : DELETE
+*/
+BookManager.delete("/publication/delete/:id", (request, response) => {
+    const updatedPublicationDatabase = Database.publications.filter((publication) => publication.id !== parseInt(request.params.id));
+    Database.publications = updatedPublicationDatabase;
+    return response.json({publications : Database.publications });
+});
+
+/* 
+    Route : /publication/delete/book
+    Description : Delete a book from publication
+    Access : PUBLIC
+    Parameters : ISBN, publication ID
+    Method : DELETE
+*/
+BookManager.delete("/publication/delete/book/:isbn/:publicationID", (request, response) => {
+    // update publication database
+    Database.publications.forEach((publication) => {
+        if(publication.id === parseInt(request.params.publicationID)){
+            const updatedPublicationDatabase = publication.books.filter((book) => book !== request.params.isbn);
+            publication.books = updatedPublicationDatabase;
+            return;
+        }
+    });
+
+    // update book database
+    Database.books.forEach((book) => {
+        if(book.ISBN === request.params.isbn){
+            book.publications = 0;
+            return;
+        }
+    });
+
+    return response.json({books : Database.books, publications : Database.publications});
 });
 
 BookManager.listen(3000, () => console.log("Server is running!!!"));

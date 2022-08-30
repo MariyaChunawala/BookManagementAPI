@@ -196,4 +196,107 @@ BookManager.post("/publication/new", (request, response) =>{
     Database.publications.push(newPublication);
     return response.json({Publications : Database.publications, Message : "New Publication is added"});
 });
+
+/* 
+    Route : /book/update/
+    Description : Update book title
+    Access : PUBLIC
+    Parameters : ISBN
+    Method : PUT
+*/
+BookManager.put("/book/update/:isbn", (request, response) =>{
+    Database.books.forEach((book) => {
+        if(book.ISBN === request.params.isbn){
+            book.title = request.body.bookTitle;
+            return;
+        }
+    })
+    return response.json({books : Database.books});
+});
+
+/* 
+    Route : /book/author/update/
+    Description : update/add new author
+    Access : PUBLIC
+    Parameters : ISBN
+    Method : PUT
+*/
+BookManager.put("/book/author/update/:isbn", (request, response) =>{
+    // update the book database
+    Database.books.forEach((book) => {
+        if(book.ISBN === request.params.isbn){
+            return book.authors.push(request.body.newAuthor);
+        }
+    })
+
+    // update the author database
+    Database.authors.forEach((author) => {
+        if(author.id === request.body.newAuthor){
+            return author.books.push(request.params.isbn);
+        }
+    })
+
+    return response.json({books: Database.books, authors: Database.authors});
+});
+
+/* 
+    Route : /author/update/
+    Description : Update author details i.e name
+    Access : PUBLIC
+    Parameters : id
+    Method : PUT
+*/
+BookManager.put("/author/update/:id", (request, response) =>{
+    Database.authors.forEach((author) => {
+        if(author.id === parseInt(request.params.id)){
+            author.name = request.body.authorName;
+            return;
+        }
+    })
+    return response.json({Authors : Database.authors});
+});
+
+/* 
+    Route : /publication/update/
+    Description : Update Publication details i.e name
+    Access : PUBLIC
+    Parameters : id
+    Method : PUT
+*/
+BookManager.put("/publication/update/:id", (request, response) =>{
+    Database.publications.forEach((publication) => {
+        if(publication.id === parseInt(request.params.id)){
+            publication.name = request.body.publicationName;
+            return;
+        }
+    })
+    return response.json({Publications : Database.publications});
+});
+
+/* 
+    Route : /publication/update/book/
+    Description : Udpate/add new book to a publications
+    Access : PUBLIC
+    Parameters : ISBN
+    Method : PUT
+*/
+BookManager.put("/publication/update/book/:isbn", (request, response) =>{
+    // update the publication database
+    Database.publications.forEach((publication) => {
+        if(publication.id === request.body.newPublication){
+            return publication.books.push(request.params.isbn);
+        }
+    })
+
+    // update the book database
+    Database.books.forEach((book) => {
+        if(book.ISBN === request.params.isbn){
+            book.publications = request.body.newPublication;
+            return;
+        }
+    })
+
+    return response.json({books: Database.books, publications: Database.publications});
+});
+
 BookManager.listen(3000, () => console.log("Server is running!!!"));

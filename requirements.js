@@ -16,8 +16,8 @@
 // To post a new book [Done]
 // 
 // 3. PUT Method
-// Update book details
-// update/add new author
+// Update book details [Done]
+// update/add new author [Done]
 // 
 // 4. DELETE Method
 // Delete a book
@@ -37,7 +37,7 @@
 // to post a new Author [Done]
 // 
 // 3. PUT Method
-// Update author details
+// Update author details i.e name [Done]
 // 
 // 4. DELETE Method
 // Delete an Author
@@ -56,9 +56,12 @@
 // Add new Publication [Done]
 // 
 // 3. PUT Method
-// Update Publication details
-// Udpate/add new book to a publications
+// Update Publication details i.e name [Done]
+// Udpate/add new book to a publications [Done]
 // 
 // 4. DELETE Method
 // Delete a book from publication
 // Delete a publication
+// 
+// 
+// How the server serves the request?

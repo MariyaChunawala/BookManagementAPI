@@ -1,8 +1,13 @@
 // BOOK MANAGEMENT API 
 
+// dotenv package
+require("dotenv").config();
+
 // Express FrameWork
-const { response } = require("express");
 const express = require("express");
+
+// Mongoose 
+const mongoose = require("mongoose");
 
 // Import Database
 const Database = require("./Database/index");
@@ -12,6 +17,9 @@ const BookManager = express();
 
 // Configuration
 BookManager.use(express.json());
+
+// Establish a connection with database
+mongoose.connect(process.env.MONGO_URL).then(() => console.log("Connection Established..."));
 
 /* 
     Route : /

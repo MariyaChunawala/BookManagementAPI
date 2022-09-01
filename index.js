@@ -77,10 +77,10 @@ BookManager.get("/c/:category", async (request, response) =>{
     Parameters : author
     Method : GET
 */
-BookManager.get("/a/:author", (request, response) =>{
-    const getListOfBook = Database.books.filter((book) => book.authors.includes(parseInt(request.params.author)));
+BookManager.get("/a/:author", async (request, response) =>{
+    const getListOfBook = await BookModel.findOne({ authors : request.params.author});
 
-    if(getListOfBook.length === 0){
+    if(!getListOfBook){
         return response.json({error : `No Book Found with author number ${request.params.author}`});
     }
     return response.json({Book : getListOfBook});
@@ -105,10 +105,10 @@ BookManager.get("/authors", async (request, response) =>{
     Parameters : id
     Method : GET
 */
-BookManager.get("/author/:id", (request, response) =>{
-    const getSpecificAuthor = Database.authors.filter((author) => author.id === parseInt(request.params.id));
+BookManager.get("/author/:id", async (request, response) =>{
+    const getSpecificAuthor = await AuthorModel.findOne({id : request.params.id});
 
-    if(getSpecificAuthor.length === 0){
+    if(!getSpecificAuthor){
         return response.json({error : `No Book Found with Id number ${request.params.id}`});
     }
     return response.json({Author : getSpecificAuthor});
@@ -121,10 +121,10 @@ BookManager.get("/author/:id", (request, response) =>{
     Parameters : ISBN of Book
     Method : GET
 */
-BookManager.get("/a/book/:isbn", (request, response) =>{
-    const getSpecificAuthorBook = Database.authors.filter((author) => author.books.includes(request.params.isbn));
+BookManager.get("/a/book/:isbn", async (request, response) =>{
+    const getSpecificAuthorBook = await AuthorModel.findOne({books : request.params.isbn});
 
-    if(getSpecificAuthorBook.length === 0){
+    if(!getSpecificAuthorBook){
         return response.json({error : `No Book Found with ISBN number ${request.params.isbn}`});
     }
     return response.json({Books : getSpecificAuthorBook});
@@ -137,8 +137,9 @@ BookManager.get("/a/book/:isbn", (request, response) =>{
     Parameters : NONE
     Method : GET
 */
-BookManager.get("/publications", (request, response) =>{
-    return response.json({ Publications : Database.publications});
+BookManager.get("/publications", async (request, response) =>{
+    const getAllPublications = await PublicationModel.find();
+    return response.json({ Publications :getAllPublications});
 });
 
 /* 
@@ -148,10 +149,10 @@ BookManager.get("/publications", (request, response) =>{
     Parameters : publication Id
     Method : GET
 */
-BookManager.get("/p/:id", (request, response) =>{
-    const getSpecificPublication = Database.publications.filter((publication) => publication.id === parseInt(request.params.id));
+BookManager.get("/p/:id", async (request, response) =>{
+    const getSpecificPublication = await PublicationModel.findOne({id : request.params.id});
 
-    if(getSpecificPublication.length === 0){
+    if(!getSpecificPublication){
         return response.json({error : `No Book Found with publication id number ${request.params.id}`});
     }
     return response.json({publications : getSpecificPublication});
@@ -164,10 +165,10 @@ BookManager.get("/p/:id", (request, response) =>{
     Parameters : Book ISBN
     Method : GET
 */
-BookManager.get("/p/book/:isbn", (request, response) =>{
-    const getListOfPublications = Database.publications.filter((publication) => publication.books.includes(request.params.isbn));
+BookManager.get("/p/book/:isbn", async (request, response) =>{
+    const getListOfPublications = await PublicationModel.findOne({ books : request.params.isbn});
 
-    if(getListOfPublications.length === 0){
+    if(!getListOfPublications){
         return response.json({error : `No Publication Found with Book ISBN number ${request.params.isbn}`});
     }
     return response.json({publications : getListOfPublications});

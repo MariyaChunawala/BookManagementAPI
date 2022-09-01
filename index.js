@@ -33,8 +33,9 @@ mongoose.connect(process.env.MONGO_URL).then(() => console.log("Connection Estab
     Parameters : NONE
     Method : GET
 */
-BookManager.get("/", (request, response) =>{
-    return response.json({ Books : Database.books});
+BookManager.get("/", async (request, response) =>{
+    const getAllBooks = await BookModel.find();
+    return response.json({ Books : getAllBooks});
 });
 
 /* 
@@ -44,10 +45,10 @@ BookManager.get("/", (request, response) =>{
     Parameters : isbn
     Method : GET
 */
-BookManager.get("/b/:isbn", (request, response) =>{
-    const getSpecificBook = Database.books.filter((book) => book.ISBN === request.params.isbn);
+BookManager.get("/b/:isbn", async (request, response) =>{
+    const getSpecificBook = await BookModel.findOne({ISBN : request.params.isbn});
 
-    if(getSpecificBook.length === 0){
+    if(!getSpecificBook){
         return response.json({error : `No Book Found with ISBN number ${request.params.isbn}`});
     }
     return response.json({Book : getSpecificBook});
@@ -60,10 +61,10 @@ BookManager.get("/b/:isbn", (request, response) =>{
     Parameters : category
     Method : GET
 */
-BookManager.get("/c/:category", (request, response) =>{
-    const getListOfBook = Database.books.filter((book) => book.category.includes(request.params.category));
+BookManager.get("/c/:category", async (request, response) =>{
+    const getListOfBook = await BookModel.findOne({ category : request.params.category});
 
-    if(getListOfBook.length === 0){
+    if(!getListOfBook){
         return response.json({error : `No Book Found with category number ${request.params.category}`});
     }
     return response.json({Book : getListOfBook});
@@ -92,8 +93,9 @@ BookManager.get("/a/:author", (request, response) =>{
     Parameters : NONE
     Method : GET
 */
-BookManager.get("/authors", (request, response) =>{
-    return response.json({ Authors : Database.authors});
+BookManager.get("/authors", async (request, response) =>{
+    const getAllAuthors = await AuthorModel.find();
+    return response.json({ Authors : getAllAuthors});
 });
 
 /* 
@@ -181,8 +183,8 @@ BookManager.get("/p/book/:isbn", (request, response) =>{
 */
 BookManager.post("/book/new", (request, response) =>{
     const { newBook } = request.body;
-    Database.books.push(newBook);
-    return response.json({Books : Database.books, Message : "New Book is added"});
+    BookModel.create(newBook);
+    return response.json({Message : "New Book is added"});
 });
 
 /* 
@@ -194,8 +196,8 @@ BookManager.post("/book/new", (request, response) =>{
 */
 BookManager.post("/author/new/post", (request, response) =>{
     const { newAuthor } = request.body;
-    Database.authors.push(newAuthor);
-    return response.json({Author : Database.authors, Message : "New Author is added"});
+    AuthorModel.create(newAuthor);
+    return response.json({Message : "New Author is added"});
 });
 
 /* 
@@ -207,8 +209,8 @@ BookManager.post("/author/new/post", (request, response) =>{
 */
 BookManager.post("/publication/new", (request, response) =>{
     const { newPublication } = request.body;
-    Database.publications.push(newPublication);
-    return response.json({Publications : Database.publications, Message : "New Publication is added"});
+    PublicationModel.create(newPublication);
+    return response.json({Message : "New Publication is added"});
 });
 
 /* 

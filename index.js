@@ -12,6 +12,11 @@ const mongoose = require("mongoose");
 // Import Database
 const Database = require("./Database/index");
 
+// Models
+const BookModel = require("./Database/book");
+const AuthorModel = require("./Database/author");
+const PublicationModel = require("./Database/publication");
+
 // Initializing express
 const BookManager = express();
 

@@ -263,14 +263,13 @@ BookManager.put("/book/author/update/:isbn", async (request, response) =>{
     Parameters : id
     Method : PUT
 */
-BookManager.put("/author/update/:id", (request, response) =>{
-    Database.authors.forEach((author) => {
-        if(author.id === parseInt(request.params.id)){
-            author.name = request.body.authorName;
-            return;
-        }
-    })
-    return response.json({Authors : Database.authors});
+BookManager.put("/author/update/:id", async (request, response) =>{
+    const authorName = await AuthorModel.findOneAndUpdate(
+        {id : parseInt(request.params.id)},
+        {name : request.body.authorName},
+        {new : true}
+    )
+    return response.json({Authors : authorName});
 });
 
 /* 
@@ -280,14 +279,14 @@ BookManager.put("/author/update/:id", (request, response) =>{
     Parameters : id
     Method : PUT
 */
-BookManager.put("/publication/update/:id", (request, response) =>{
-    Database.publications.forEach((publication) => {
-        if(publication.id === parseInt(request.params.id)){
-            publication.name = request.body.publicationName;
-            return;
-        }
-    })
-    return response.json({Publications : Database.publications});
+BookManager.put("/publication/update/:id", async (request, response) =>{
+    const publicationName = await PublicationModel.findOneAndUpdate(
+        {id : parseInt(request.params.id)},
+        {name : request.body.publicationName},
+        {new : true}
+    )
+
+    return response.json({Publications : publicationName});
 });
 
 /* 
@@ -297,23 +296,22 @@ BookManager.put("/publication/update/:id", (request, response) =>{
     Parameters : ISBN
     Method : PUT
 */
-BookManager.put("/publication/update/book/:isbn", (request, response) =>{
+BookManager.put("/publication/update/book/:isbn", async (request, response) =>{
     // update the publication database
-    Database.publications.forEach((publication) => {
-        if(publication.id === request.body.newPublication){
-            return publication.books.push(request.params.isbn);
-        }
-    })
+    const updatedPublication = await PublicationModel.findOneAndUpdate(
+        {id : request.body.newPublication},
+        {$addToSet: {books : request.params.isbn}},
+        {new : true}
+    )
 
     // update the book database
-    Database.books.forEach((book) => {
-        if(book.ISBN === request.params.isbn){
-            book.publications = request.body.newPublication;
-            return;
-        }
-    })
+    const updatedBook = await BookModel.findOneAndUpdate(
+        {ISBN : request.params.isbn},
+        {$set : {publications : request.body.newPublication}},
+        {new : true}
+    )
 
-    return response.json({books: Database.books, publications: Database.publications});
+    return response.json({books: updatedBook, publications: updatedPublication});
 });
 
 /* 
@@ -364,10 +362,11 @@ BookManager.delete("/book/delete/author/:isbn/:authorId", async (request, respon
     Parameters : ID
     Method : DELETE
 */
-BookManager.delete("/author/delete/:id", (request, response) => {
-    const updatedAuthorDatabase = Database.authors.filter((author) => author.id !== parseInt(request.params.id));
-    Database.authors = updatedAuthorDatabase;
-    return response.json({authors : Database.authors });
+BookManager.delete("/author/delete/:id", async (request, response) => {
+    const updatedAuthorDatabase = await AuthorModel.findOneAndDelete(
+        {id : parseInt(request.params.id)}
+    )
+    return response.json({authors : updatedAuthorDatabase });
 });
 
 /* 
@@ -377,10 +376,11 @@ BookManager.delete("/author/delete/:id", (request, response) => {
     Parameters : ID
     Method : DELETE
 */
-BookManager.delete("/publication/delete/:id", (request, response) => {
-    const updatedPublicationDatabase = Database.publications.filter((publication) => publication.id !== parseInt(request.params.id));
-    Database.publications = updatedPublicationDatabase;
-    return response.json({publications : Database.publications });
+BookManager.delete("/publication/delete/:id", async (request, response) => {
+    const updatedPublicationDatabase = await PublicationModel.findOneAndDelete(
+        {id : parseInt(request.params.id)}
+    )
+    return response.json({authors : updatedPublicationDatabase });
 });
 
 /* 
@@ -390,25 +390,22 @@ BookManager.delete("/publication/delete/:id", (request, response) => {
     Parameters : ISBN, publication ID
     Method : DELETE
 */
-BookManager.delete("/publication/delete/book/:isbn/:publicationID", (request, response) => {
+BookManager.delete("/publication/delete/book/:isbn/:publicationID", async (request, response) => {
     // update publication database
-    Database.publications.forEach((publication) => {
-        if(publication.id === parseInt(request.params.publicationID)){
-            const updatedPublicationDatabase = publication.books.filter((book) => book !== request.params.isbn);
-            publication.books = updatedPublicationDatabase;
-            return;
-        }
-    });
+    const updatedPublicationDatabase = await PublicationModel.findOneAndUpdate(
+        {id : parseInt(request.params.publicationID)},
+        {$pull : {books : request.params.isbn}},
+        {new : true}
+    );
 
     // update book database
-    Database.books.forEach((book) => {
-        if(book.ISBN === request.params.isbn){
-            book.publications = 0;
-            return;
-        }
-    });
+    const updatedBookDatabase = await BookModel.findOneAndUpdate(
+        {ISBN : request.params.isbn},
+        {publications : 0},
+        {new : true}
+    )
 
-    return response.json({books : Database.books, publications : Database.publications});
+    return response.json({books : updatedPublicationDatabase, publications : updatedBookDatabase});
 });
 
 BookManager.listen(3000, () => console.log("Server is running!!!"));

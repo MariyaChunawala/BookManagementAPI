@@ -47,4 +47,4 @@ const publications = [
     },
 ];
 
-module.exports = {books, authors, publications};
+export default {books, authors, publications};
